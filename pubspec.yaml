@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.2
+  audio_service: ^0.18.0
+  just_audio: ^0.9.34
 
   cupertino_icons: ^1.0.2
 
