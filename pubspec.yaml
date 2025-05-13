@@ -12,7 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   audio_service: ^0.18.0
   just_audio: ^0.9.34
-
+  audioplayers: ^4.1.0
   
 
 dev_dependencies:
@@ -23,4 +23,12 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icon/app_icon.png
+  - assets/audio/174Hz.mp3
+  - assets/audio/285Hz.mp3
+  - assets/audio/396Hz.mp3
+  - assets/audio/417Hz.mp3
+  - assets/audio/528Hz.mp3
+  - assets/audio/639Hz.mp3
+  - assets/audio/741Hz.mp3
+  - assets/audio/852Hz.mp3
+  - assets/audio/963Hz.mp3
