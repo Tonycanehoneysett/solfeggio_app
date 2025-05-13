@@ -1,14 +1,35 @@
+name: solfeggio_app
+description: A new Flutter project.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.1.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  audio_service: ^0.18.0
+  just_audio: ^0.9.34
+  audioplayers: ^4.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
 flutter:
   uses-material-design: true
   assets:
     - assets/icon/app_icon.png
-    - assets/audio/174Hz_30min.mp3
-    - assets/audio/285Hz_30min.mp3
-    - assets/audio/396Hz_30min.mp3
-    - assets/audio/417Hz_30min.mp3
-    - assets/audio/432Hz_30min.mp3
-    - assets/audio/528Hz_30min.mp3
-    - assets/audio/639Hz_30min.mp3
-    - assets/audio/741Hz_30min.mp3
-    - assets/audio/852Hz_30min.mp3
-    - assets/audio/963Hz_30min.mp3
+    - assets/audio/174hz_30min.mp3
+    - assets/audio/285hz_30min.mp3
+    - assets/audio/396hz_30min.mp3
+    - assets/audio/417hz_30min.mp3
+    - assets/audio/432hz_30min.mp3
+    - assets/audio/528hz_30min.mp3
+    - assets/audio/639hz_30min.mp3
+    - assets/audio/741hz_30min.mp3
+    - assets/audio/852hz_30min.mp3
+    - assets/audio/963hz_30min.mp3
