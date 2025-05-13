@@ -17,29 +17,44 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Audio Wellness')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Audio Wellness provides healing tones to support mind and body.',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TonesPage()),
-                );
-              },
-              child: Text('Explore Tones'),
-            ),
-          ],
-        ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/icon/app_icon.png',
+            fit: BoxFit.cover,
+          ),
+          Container(
+            color: Colors.black.withOpacity(0.4), // optional overlay
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Text(
+                  'Audio Wellness provides healing tones to support mind and body.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TonesPage()),
+                  );
+                },
+                child: Text('Explore Tones'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -47,12 +62,12 @@ class HomePage extends StatelessWidget {
 
 class TonesPage extends StatelessWidget {
   final List<Map<String, String>> tones = [
-    {'name': '396 Hz', 'benefit': 'Liberates guilt and fear'},
+    {'name': '396 Hz', 'benefit': 'Liberates fear and guilt'},
     {'name': '417 Hz', 'benefit': 'Facilitates change'},
-    {'name': '528 Hz', 'benefit': 'Cellular regeneration'},
-    {'name': '639 Hz', 'benefit': 'Heals relationships'},
-    {'name': '741 Hz', 'benefit': 'Awakens intuition'},
-    {'name': '852 Hz', 'benefit': 'Spiritual order'},
+    {'name': '528 Hz', 'benefit': 'DNA repair and healing'},
+    {'name': '639 Hz', 'benefit': 'Harmonizes relationships'},
+    {'name': '741 Hz', 'benefit': 'Cleanses toxins'},
+    {'name': '852 Hz', 'benefit': 'Awakens intuition'},
   ];
 
   @override
@@ -66,10 +81,6 @@ class TonesPage extends StatelessWidget {
           return ListTile(
             title: Text(tone['name']!),
             subtitle: Text(tone['benefit']!),
-            trailing: Icon(Icons.play_arrow), // replace with audio player logic
-            onTap: () {
-              // handle play tone (not wired yet)
-            },
           );
         },
       ),
