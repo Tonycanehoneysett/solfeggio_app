@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.0),
                   child: Text(
-                    'Audio Wellness provides healing tones to support mind and body.',
+                    'Select the frequency that best supports your emotional and physical needs',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16),
                   ),
@@ -63,6 +63,9 @@ class HomePage extends StatelessWidget {
 
 class TonesPage extends StatelessWidget {
   final List<Map<String, String>> tones = [
+    {'name': '174 Hz', 'benefit': 'Pain relief, grounding'},
+    {'name': '285 Hz', 'benefit': 'Tissue healing, rejuvenation'},
+    {'name': '396 Hz', 'benefit': 'Liberation from fear and guilt'},
     {'name': '432 Hz', 'benefit': 'Calming, grounding'},
     {'name': '528 Hz', 'benefit': 'DNA healing, transformation'},
     {'name': '639 Hz', 'benefit': 'Harmony in relationships'},
