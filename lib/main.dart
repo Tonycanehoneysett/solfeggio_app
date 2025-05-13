@@ -14,9 +14,14 @@ class MyApp extends StatelessWidget {
           title: Text('Audio Wellness'),
         ),
         body: Center(
-          child: Text('Hello, world!'),
-        ),
-      ),
+ body: Center(
+  child: Image.asset(
+    'assets/icon/app_icon.png',
+    fit: BoxFit.cover,
+    width: double.infinity,
+    height: double.infinity,
+  ),
+),
     );
   }
 }
