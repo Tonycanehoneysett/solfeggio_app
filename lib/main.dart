@@ -83,9 +83,12 @@ class TonesPage extends StatefulWidget {
   State<TonesPage> createState() => _TonesPageState();
 }
 
-class _TonesPageState extends State<TonesPage> {
-  AudioPlayer? _player;
-  String? _currentlyPlaying;
+class TonesPage extends StatefulWidget {
+  const TonesPage({super.key});
+
+  @override
+  State<TonesPage> createState() => _TonesPageState();
+}
 
   Future<void> _handleToneTap(String toneName) async {
     final filename = '${toneName.toLowerCase()}_30min.mp3';
@@ -135,7 +138,7 @@ class _TonesPageState extends State<TonesPage> {
       ),
     );
   }
-}}
+}
 class TonesPage extends StatelessWidget {
   const TonesPage({super.key});
 
