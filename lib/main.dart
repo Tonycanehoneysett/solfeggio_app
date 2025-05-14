@@ -65,3 +65,14 @@ void main() {
     home: HomePage(),
   ));
 }
+class TonesPage extends StatelessWidget {
+  const TonesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Healing Tones')),
+      body: Center(child: Text('Tone list goes here')),
+    );
+  }
+}
