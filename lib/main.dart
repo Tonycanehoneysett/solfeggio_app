@@ -1,77 +1,66 @@
-import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
-class TonesPage extends StatefulWidget {
-  const TonesPage({super.key});
-
-  @override
-  State<TonesPage> createState() => _TonesPageState();
-}
-
-class _TonesPageState extends State<TonesPage> {
-  final List<Map<String, String>> tones = [
-    {'name': '174Hz', 'benefit': 'Pain relief, stress'},
-    {'name': '285Hz', 'benefit': 'Cellular repair'},
-    {'name': '396Hz', 'benefit': 'Fear, guilt release'},
-    {'name': '417Hz', 'benefit': 'Emotional healing'},
-    {'name': '432Hz', 'benefit': 'Calming, grounding'},
-    {'name': '528Hz', 'benefit': 'DNA healing, love'},
-    {'name': '639Hz', 'benefit': 'Harmony in relationships'},
-    {'name': '852Hz', 'benefit': 'Spiritual awakening'},
-    {'name': '963Hz', 'benefit': 'Pineal gland, connection'},
-  ];
-
-  AudioPlayer? _player;
-  String? _currentlyPlaying;
-
-  Future<void> _handleToneTap(String toneName) async {
-    final filename = '${toneName.toLowerCase()}_30min.mp3';
-    
-    // If the same tone is playing, stop it
-    if (_currentlyPlaying == filename) {
-      await _player?.stop();
-      setState(() => _currentlyPlaying = null);
-      return;
-    }
-
-    // Stop previous tone
-    await _player?.stop();
-
-    // Start new tone on loop
-    final newPlayer = AudioPlayer();
-    await newPlayer.setLoopMode(LoopMode.one);
-    await newPlayer.setAsset('assets/audio/$filename');
-    await newPlayer.play();
-
-    setState(() {
-      _player = newPlayer;
-      _currentlyPlaying = filename;
-    });
-  }
-
-  @override
-  void dispose() {
-    _player?.dispose();
-    super.dispose();
-  }
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Healing Tones')),
-      body: ListView.builder(
-        itemCount: tones.length,
-        itemBuilder: (context, index) {
-          final tone = tones[index];
-          return ListTile(
-            title: Text(tone['name']!),
-            subtitle: Text(tone['benefit']!),
-            onTap: () => _handleToneTap(tone['name']!),
-            trailing: _currentlyPlaying == '${tone['name']!.toLowerCase()}_30min.mp3'
-                ? const Icon(Icons.pause_circle)
-                : const Icon(Icons.play_circle),
-          );
-        },
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height * 0.5,
+            color: Colors.blue.shade800,
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Audio Wellness',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Frequency Healing For Mind & Body',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            child: Text(
+              'Select the frequency that best supports your emotional and physical needs',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TonesPage()),
+              );
+            },
+            child: const Text('Explore Tones'),
+          ),
+        ],
       ),
     );
   }
+}
+void main() {
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: HomePage(),
+  ));
 }
