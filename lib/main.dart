@@ -16,45 +16,45 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/icon/app_icon.png',
-                height: 200,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Audio Wellness',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
               ),
-              const SizedBox(height: 24),
-              const Text(
-                'Audio Wellness',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Frequency Healing For Mind & Body',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.blueAccent,
               ),
-              const SizedBox(height: 8),
-              const Text(
+            ),
+            const SizedBox(height: 32),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
                 'Select the frequency that best supports your emotional and physical needs',
+                style: TextStyle(fontSize: 16),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
               ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const TonesPage()),
-                  );
-                },
-                child: const Text('Explore Tones'),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TonesPage()),
+                );
+              },
+              child: const Text('Explore Tones'),
+            ),
+          ],
         ),
       ),
     );
@@ -85,7 +85,7 @@ class _TonesPageState extends State<TonesPage> {
   ];
 
   Future<void> _handleToneTap(String toneName) async {
-    final filename = '${toneName.toLowerCase()}_30min.mp3';
+    final filename = 'assets/audio/${toneName.toLowerCase()}_30min.mp3';
 
     if (_currentlyPlaying == filename) {
       await _player?.stop();
@@ -96,7 +96,7 @@ class _TonesPageState extends State<TonesPage> {
     _player?.dispose();
     final newPlayer = AudioPlayer();
     await newPlayer.setLoopMode(LoopMode.one);
-    await newPlayer.setAsset('assets/audio/$filename');
+    await newPlayer.setAsset(filename);
     await newPlayer.play();
 
     setState(() {
@@ -119,7 +119,7 @@ class _TonesPageState extends State<TonesPage> {
         itemCount: tones.length,
         itemBuilder: (context, index) {
           final tone = tones[index];
-          final filename = '${tone['name']!.toLowerCase()}_30min.mp3';
+          final filename = 'assets/audio/${tone['name']!.toLowerCase()}_30min.mp3';
           return ListTile(
             title: Text(tone['name']!),
             subtitle: Text(tone['benefit']!),
