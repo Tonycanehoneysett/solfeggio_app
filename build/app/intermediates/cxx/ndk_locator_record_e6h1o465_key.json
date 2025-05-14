@@ -1,0 +1,6 @@
+{
+  "ndkVersionFromDsl": "26.3.11579264",
+  "ndkDirProperty": "/home/ubuntu/android_ndk_manual/ndk/26.3.11579264",
+  "sdkFolder": "/usr/lib/android-sdk",
+  "sideBySideNdkFolderNames": []
+}

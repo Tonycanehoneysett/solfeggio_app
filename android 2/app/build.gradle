@@ -24,9 +24,9 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.solfeggio_app"
-    compileSdk = 34
-    ndkVersion = "25.1.8937393"
+    namespace = "com.example.solfeggio_app"
+    compileSdk = 35
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
