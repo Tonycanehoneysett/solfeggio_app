@@ -11,53 +11,48 @@ void main() {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Audio Wellness',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
-            ),
+ body: Center(
+  child: SingleChildScrollView(
+    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'Audio Wellness',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Frequency Healing For Mind & Body',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.blue,
-            ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Frequency Healing For Mind & Body',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.blue,
           ),
-          const SizedBox(height: 40),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.0),
-            child: Text(
-              'Select the frequency that best supports your emotional and physical needs',
-              style: TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const TonesPage()),
-              );
-            },
-            child: const Text('Explore Tones'),
-          ),
-        ],
-      ),
-    );
-  }
-}
+        ),
+        const SizedBox(height: 40),
+        const Text(
+          'Select the frequency that best supports your emotional and physical needs',
+          style: TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const TonesPage()),
+            );
+          },
+          child: const Text('Explore Tones'),
+        ),
+      ],
+    ),
+  ),
+),
 
 class TonesPage extends StatefulWidget {
   const TonesPage({super.key});
