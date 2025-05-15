@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF002366), // Royal blue
+      backgroundColor: Colors.blue[900],
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -27,21 +27,25 @@ class HomePage extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
             const Text(
-              'Select the frequency that best supports your emotional and physical needs',
+              'Frequency Healing For Mind & Body',
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.white,
               ),
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                'Select the frequency that best supports your emotional and physical needs',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+                textAlign: TextAlign.center,
               ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -78,7 +82,7 @@ class _TonesPageState extends State<TonesPage> {
   ];
 
   final List<AudioPlayer> _players = [];
-  bool isPlaying = false;
+  String? _currentlyPlaying;
 
   @override
   void dispose() {
@@ -88,39 +92,60 @@ class _TonesPageState extends State<TonesPage> {
     super.dispose();
   }
 
-  Future<void> _playTone(String toneName) async {
+  Future<void> _handleToneTap(String toneName) async {
+    final filename = '${toneName.toLowerCase()}_30min.mp3';
     final player = AudioPlayer();
-    final filename = 'assets/audio/${toneName.toLowerCase()}_30min.mp3';
-    await player.setLoopMode(LoopMode.one);
-    await player.setAsset(filename);
-    await player.play();
-    _players.add(player);
-    setState(() {
-      isPlaying = true;
-    });
+    try {
+      await player.setAsset('assets/audio/$filename');
+      await player.setLoopMode(LoopMode.one);
+      await player.play();
+      _players.add(player);
+      setState(() {
+        _currentlyPlaying = filename;
+      });
+    } catch (e) {
+      debugPrint('Playback error: $e');
+    }
   }
 
-  Future<void> _stopAllTones() async {
+  Future<void> _stopAllPlayback() async {
     for (var player in _players) {
       await player.stop();
+      await player.dispose();
     }
     _players.clear();
     setState(() {
-      isPlaying = false;
+      _currentlyPlaying = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF002366),
+      backgroundColor: Colors.blue[900],
       appBar: AppBar(
-        title: const Text('Healing Tones'),
-        backgroundColor: const Color(0xFF002366),
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.blue[900],
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          'Healing Tones',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Column(
         children: [
+          const SizedBox(height: 16),
+          Center(
+            child: ElevatedButton(
+              onPressed: _stopAllPlayback,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(20),
+              ),
+              child: const Icon(Icons.stop, color: Colors.white, size: 32),
+            ),
+          ),
+          const SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
               itemCount: tones.length,
@@ -135,21 +160,12 @@ class _TonesPageState extends State<TonesPage> {
                     tone['benefit']!,
                     style: const TextStyle(color: Colors.white70),
                   ),
-                  onTap: () => _playTone(tone['name']!),
+                  trailing: const Icon(Icons.play_circle, color: Colors.white),
+                  onTap: () => _handleToneTap(tone['name']!),
                 );
               },
             ),
           ),
-          const SizedBox(height: 20),
-          if (isPlaying)
-            Center(
-              child: IconButton(
-                iconSize: 64,
-                onPressed: _stopAllTones,
-                icon: const Icon(Icons.stop_circle, color: Colors.red),
-              ),
-            ),
-          const SizedBox(height: 20),
         ],
       ),
     );
