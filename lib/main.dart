@@ -14,53 +14,58 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1AFF), // Deep blue background
+      backgroundColor: Colors.blue.shade700,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Audio\nWellness',
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Audio\nWellness',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: Colors.lightGreenAccent,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Frequency Healing For Mind & Body',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 40),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                'Select the frequency that best supports your emotional and physical needs',
+                style: TextStyle(fontSize: 14, color: Colors.white),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.lightGreenAccent,
+              ),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TonesPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Frequency Healing For Mind & Body',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                child: Text('Explore Tones'),
               ),
-              const SizedBox(height: 60),
-              const Text(
-                'Select the frequency that best supports your\nemotional and physical needs',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const TonesPage()),
-                  );
-                },
-                child: const Text('Explore Tones'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -75,9 +80,6 @@ class TonesPage extends StatefulWidget {
 }
 
 class _TonesPageState extends State<TonesPage> {
-  AudioPlayer? _player;
-  String? _currentlyPlaying;
-
   final List<Map<String, String>> tones = [
     {'name': '174Hz', 'benefit': 'Pain relief & stress reduction'},
     {'name': '285Hz', 'benefit': 'Healing tissues & organs'},
@@ -90,30 +92,45 @@ class _TonesPageState extends State<TonesPage> {
     {'name': '963Hz', 'benefit': 'Spiritual awakening & divine consciousness'},
   ];
 
+  final Map<String, AudioPlayer> _players = {};
+  final Set<String> _currentlyPlaying = {};
+
   Future<void> _handleToneTap(String toneName) async {
     final filename = '${toneName.toLowerCase()}_30min.mp3';
 
-    if (_currentlyPlaying == filename) {
-      await _player?.stop();
-      setState(() => _currentlyPlaying = null);
+    if (_currentlyPlaying.contains(filename)) {
+      await _players[filename]?.stop();
+      setState(() {
+        _currentlyPlaying.remove(filename);
+      });
       return;
     }
 
-    _player?.dispose();
-    final newPlayer = AudioPlayer();
-    await newPlayer.setLoopMode(LoopMode.one);
-    await newPlayer.setAsset('assets/audio/$filename');
-    await newPlayer.play();
+    final player = AudioPlayer();
+    await player.setLoopMode(LoopMode.one);
+    await player.setAsset('assets/audio/$filename');
+    await player.play();
 
+    _players[filename] = player;
     setState(() {
-      _player = newPlayer;
-      _currentlyPlaying = filename;
+      _currentlyPlaying.add(filename);
+    });
+  }
+
+  Future<void> _stopAll() async {
+    for (final player in _players.values) {
+      await player.stop();
+    }
+    setState(() {
+      _currentlyPlaying.clear();
     });
   }
 
   @override
   void dispose() {
-    _player?.dispose();
+    for (final player in _players.values) {
+      player.dispose();
+    }
     super.dispose();
   }
 
@@ -121,27 +138,40 @@ class _TonesPageState extends State<TonesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Healing Tones')),
-      body: ListView.builder(
-        itemCount: tones.length,
-        itemBuilder: (context, index) {
-          final tone = tones[index];
-          final filename = '${tone['name']!.toLowerCase()}_30min.mp3';
-          final isPlaying = _currentlyPlaying == filename;
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: tones.length,
+              itemBuilder: (context, index) {
+                final tone = tones[index];
+                final filename = '${tone['name']!.toLowerCase()}_30min.mp3';
+                final isPlaying = _currentlyPlaying.contains(filename);
 
-          return ListTile(
-            title: Text(tone['name']!),
-            subtitle: Text(tone['benefit']!),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(isPlaying ? Icons.stop_circle : Icons.play_circle),
-                  onPressed: () => _handleToneTap(tone['name']!),
-                ),
-              ],
+                return ListTile(
+                  title: Text(tone['name']!),
+                  subtitle: Text(tone['benefit']!),
+                  trailing: IconButton(
+                    icon: Icon(isPlaying ? Icons.stop_circle : Icons.play_circle),
+                    onPressed: () => _handleToneTap(tone['name']!),
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.stop),
+              label: const Text('Stop All'),
+              onPressed: _currentlyPlaying.isNotEmpty ? _stopAll : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red.shade400,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
