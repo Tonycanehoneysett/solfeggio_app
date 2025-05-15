@@ -14,58 +14,46 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
-        color: Colors.blue[800],
         width: double.infinity,
-        height: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Audio\nWellness',
-              textAlign: TextAlign.center,
+              'Audio Wellness',
               style: TextStyle(
                 fontSize: 40,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFB3FFCB), // light green/blue
-                height: 1.2,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
               ),
             ),
             const SizedBox(height: 8),
             const Text(
               'Frequency Healing For Mind & Body',
               style: TextStyle(
-                fontSize: 16,
-                color: Colors.white70,
+                fontSize: 20,
+                color: Colors.blue,
               ),
             ),
-            const SizedBox(height: 60),
-            Container(
-              padding: const EdgeInsets.all(24.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'Select the frequency that best supports your emotional and physical needs',
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const TonesPage()),
-                      );
-                    },
-                    child: const Text('Explore Tones'),
-                  ),
-                ],
-              ),
-            )
+            const SizedBox(height: 40),
+            const Text(
+              'Select the frequency that best supports your emotional and physical needs',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TonesPage()),
+                );
+              },
+              child: const Text('Explore Tones'),
+            ),
           ],
         ),
       ),
@@ -100,25 +88,26 @@ class _TonesPageState extends State<TonesPage> {
     final filename = '${toneName.toLowerCase()}_30min.mp3';
 
     if (_currentlyPlaying == filename) {
+      // Stop the current tone
       await _player?.stop();
       setState(() => _currentlyPlaying = null);
       return;
     }
 
+    // Stop and dispose any existing player
+    await _player?.stop();
     _player?.dispose();
+
+    // Create new player
     final newPlayer = AudioPlayer();
     await newPlayer.setLoopMode(LoopMode.one);
-    try {
-      await newPlayer.setAsset('assets/audio/$filename');
-      await newPlayer.play();
+    await newPlayer.setAsset('assets/audio/$filename');
+    await newPlayer.play();
 
-      setState(() {
-        _player = newPlayer;
-        _currentlyPlaying = filename;
-      });
-    } catch (e) {
-      debugPrint('Error playing $filename: $e');
-    }
+    setState(() {
+      _player = newPlayer;
+      _currentlyPlaying = filename;
+    });
   }
 
   @override
@@ -136,13 +125,14 @@ class _TonesPageState extends State<TonesPage> {
         itemBuilder: (context, index) {
           final tone = tones[index];
           final filename = '${tone['name']!.toLowerCase()}_30min.mp3';
+
           return ListTile(
             title: Text(tone['name']!),
             subtitle: Text(tone['benefit']!),
-            trailing: _currentlyPlaying == filename
-                ? const Icon(Icons.pause_circle)
-                : const Icon(Icons.play_circle),
             onTap: () => _handleToneTap(tone['name']!),
+            trailing: _currentlyPlaying == filename
+                ? const Icon(Icons.pause_circle, color: Colors.blue)
+                : const Icon(Icons.play_circle_outline),
           );
         },
       ),
