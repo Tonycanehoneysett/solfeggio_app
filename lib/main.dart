@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             const Text(
               'Frequency Healing For Mind & Body',
               style: TextStyle(
@@ -52,6 +52,10 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const TonesPage()),
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.blue[900],
+              ),
               child: const Text('Explore Tones'),
             ),
           ],
@@ -81,42 +85,41 @@ class _TonesPageState extends State<TonesPage> {
     {'name': '963Hz', 'benefit': 'Spiritual awakening & divine consciousness'},
   ];
 
-  final List<AudioPlayer> _players = [];
+  List<AudioPlayer> _activePlayers = [];
   String? _currentlyPlaying;
-
-  @override
-  void dispose() {
-    for (var player in _players) {
-      player.dispose();
-    }
-    super.dispose();
-  }
 
   Future<void> _handleToneTap(String toneName) async {
     final filename = '${toneName.toLowerCase()}_30min.mp3';
-    final player = AudioPlayer();
-    try {
-      await player.setAsset('assets/audio/$filename');
-      await player.setLoopMode(LoopMode.one);
-      await player.play();
-      _players.add(player);
-      setState(() {
-        _currentlyPlaying = filename;
-      });
-    } catch (e) {
-      debugPrint('Playback error: $e');
-    }
+
+    final newPlayer = AudioPlayer();
+    await newPlayer.setLoopMode(LoopMode.one);
+    await newPlayer.setAsset('assets/audio/$filename');
+    await newPlayer.play();
+
+    _activePlayers.add(newPlayer);
+
+    setState(() {
+      _currentlyPlaying = filename;
+    });
   }
 
   Future<void> _stopAllPlayback() async {
-    for (var player in _players) {
+    for (var player in _activePlayers) {
       await player.stop();
       await player.dispose();
     }
-    _players.clear();
+    _activePlayers.clear();
     setState(() {
       _currentlyPlaying = null;
     });
+  }
+
+  @override
+  void dispose() {
+    for (var player in _activePlayers) {
+      player.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -135,17 +138,12 @@ class _TonesPageState extends State<TonesPage> {
         children: [
           const SizedBox(height: 16),
           Center(
-            child: ElevatedButton(
+            child: IconButton(
+              iconSize: 56,
+              icon: const Icon(Icons.stop_circle, color: Colors.red),
               onPressed: _stopAllPlayback,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(20),
-              ),
-              child: const Icon(Icons.stop, color: Colors.white, size: 32),
             ),
           ),
-          const SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
               itemCount: tones.length,
