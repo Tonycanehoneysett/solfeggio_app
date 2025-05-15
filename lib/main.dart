@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -29,8 +28,7 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Select the frequency that best supports your
-emotional and physical needs',
+            'Select the frequency that best supports your\nemotional and physical needs',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
@@ -85,85 +83,3 @@ class _TonesPageState extends State<TonesPage> {
   ];
 
   Future<void> _handleToneTap(String filename) async {
-    try {
-      if (_currentlyPlaying == filename) {
-        await _player.stop();
-        setState(() => _currentlyPlaying = null);
-      } else {
-        await _player.stop();
-        await _player.setLoopMode(LoopMode.one);
-        await _player.setAsset('assets/audio/$filename.mp3');
-        await _player.play();
-        setState(() => _currentlyPlaying = filename);
-      }
-    } catch (e) {
-      debugPrint('Playback error: $e');
-    }
-  }
-
-  Future<void> _stopPlayback() async {
-    await _player.stop();
-    setState(() => _currentlyPlaying = null);
-  }
-
-  @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF003366), // Royal Blue
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF003366),
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Pure Healing Tones',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          IconButton(
-            iconSize: 48,
-            icon: const Icon(Icons.stop_circle, color: Colors.red, size: 48),
-            onPressed: _stopPlayback,
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: ListView.builder(
-              itemCount: tones.length,
-              itemBuilder: (context, index) {
-                final tone = tones[index];
-                final filename = tone['name']!.toLowerCase();
-                final isPlaying = _currentlyPlaying == filename;
-
-                return ListTile(
-                  title: Text(
-                    '${tone['name']!.replaceAll("_30min", "")} — ${tone['chakra']}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  subtitle: Text(
-                    tone['benefit']!,
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(
-                      isPlaying ? Icons.stop : Icons.play_arrow,
-                      color: Colors.white,
-                    ),
-                    onPressed: () => _handleToneTap(filename),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
