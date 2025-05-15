@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -14,42 +15,47 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF003366),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/icon/icon.png', height: 160),
-            const SizedBox(height: 20),
-            const Text(
-              'Audio Wellness',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+      backgroundColor: const Color(0xFF003366), // Royal Blue
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Audio Wellness',
+            style: TextStyle(
+              fontSize: 32,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Select the frequency that best supports your
+emotional and physical needs',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TonesPage()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
               ),
             ),
-            const SizedBox(height: 12),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32.0),
-              child: Text(
-                'Select the frequency that best supports your emotional and physical needs',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TonesPage()),
-                );
-              },
-              child: const Text('Explore Tones'),
-            ),
-          ],
-        ),
+            child: const Text('Explore Tones'),
+          )
+        ],
       ),
     );
   }
@@ -63,100 +69,99 @@ class TonesPage extends StatefulWidget {
 }
 
 class _TonesPageState extends State<TonesPage> {
-  AudioPlayer? _player;
+  final AudioPlayer _player = AudioPlayer();
   String? _currentlyPlaying;
 
   final List<Map<String, String>> tones = [
-    {'name': '174Hz', 'benefit': 'Pain relief & stress reduction (Root Chakra)'},
-    {'name': '285Hz', 'benefit': 'Healing tissues & organs (Sacral Chakra)'},
-    {'name': '396Hz', 'benefit': 'Liberating fear & guilt (Solar Plexus Chakra)'},
-    {'name': '417Hz', 'benefit': 'Undoing situations & trauma (Heart Chakra)'},
-    {'name': '528Hz', 'benefit': 'Harmonizing body & spirit (Throat Chakra)'},
-    {'name': '639Hz', 'benefit': 'DNA repair & transformation (Third Eye Chakra)'},
-    {'name': '741Hz', 'benefit': 'Connecting relationships (Crown Chakra)'},
-    {'name': '852Hz', 'benefit': 'Solving problems & intuition (Soul Star Chakra)'},
-    {'name': '963Hz', 'benefit': 'Spiritual awakening (Divine Connection)'},
+    {'name': '174hz_30min', 'benefit': 'Pain relief & stress reduction', 'chakra': 'Root Chakra'},
+    {'name': '285hz_30min', 'benefit': 'Healing tissues & organs', 'chakra': 'Sacral Chakra'},
+    {'name': '396hz_30min', 'benefit': 'Liberating fear & guilt', 'chakra': 'Solar Plexus Chakra'},
+    {'name': '417hz_30min', 'benefit': 'Undoing situations & trauma', 'chakra': 'Heart Chakra'},
+    {'name': '528hz_30min', 'benefit': 'Harmonizing body & spirit', 'chakra': 'Throat Chakra'},
+    {'name': '639hz_30min', 'benefit': 'DNA repair & transformation', 'chakra': 'Third Eye Chakra'},
+    {'name': '741hz_30min', 'benefit': 'Connecting relationships', 'chakra': 'Crown Chakra'},
+    {'name': '852hz_30min', 'benefit': 'Solving problems & intuition', 'chakra': 'Soul Star Chakra'},
+    {'name': '963hz_30min', 'benefit': 'Spiritual awakening & divine consciousness', 'chakra': 'Universal Chakra'},
   ];
 
-  Future<void> _handleToneTap(String toneName) async {
-    final filename = '${toneName.toLowerCase()}_30min.mp3';
-
-    if (_currentlyPlaying == filename) {
-      await _player?.stop();
-      setState(() => _currentlyPlaying = null);
-      return;
+  Future<void> _handleToneTap(String filename) async {
+    try {
+      if (_currentlyPlaying == filename) {
+        await _player.stop();
+        setState(() => _currentlyPlaying = null);
+      } else {
+        await _player.stop();
+        await _player.setLoopMode(LoopMode.one);
+        await _player.setAsset('assets/audio/$filename.mp3');
+        await _player.play();
+        setState(() => _currentlyPlaying = filename);
+      }
+    } catch (e) {
+      debugPrint('Playback error: $e');
     }
-
-    _player?.dispose();
-    final newPlayer = AudioPlayer();
-    await newPlayer.setLoopMode(LoopMode.one);
-    await newPlayer.setAsset('assets/audio/$filename');
-    await newPlayer.play();
-
-    setState(() {
-      _player = newPlayer;
-      _currentlyPlaying = filename;
-    });
   }
 
-  void _stopAllPlayback() {
-    _player?.stop();
+  Future<void> _stopPlayback() async {
+    await _player.stop();
     setState(() => _currentlyPlaying = null);
   }
 
   @override
   void dispose() {
-    _player?.dispose();
+    _player.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF003366),
+      backgroundColor: const Color(0xFF003366), // Royal Blue
       appBar: AppBar(
         backgroundColor: const Color(0xFF003366),
-        title: const Center(
-          child: Text('Pure Healing Tones'),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          'Pure Healing Tones',
+          style: TextStyle(color: Colors.white),
         ),
-        foregroundColor: Colors.white,
+        centerTitle: true,
       ),
       body: Column(
         children: [
+          const SizedBox(height: 20),
+          IconButton(
+            iconSize: 48,
+            icon: const Icon(Icons.stop_circle, color: Colors.red, size: 48),
+            onPressed: _stopPlayback,
+          ),
+          const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
               itemCount: tones.length,
               itemBuilder: (context, index) {
                 final tone = tones[index];
-                final filename = '${tone['name']!.toLowerCase()}_30min.mp3';
+                final filename = tone['name']!.toLowerCase();
+                final isPlaying = _currentlyPlaying == filename;
+
                 return ListTile(
                   title: Text(
-                    tone['name']!,
+                    '${tone['name']!.replaceAll("_30min", "")} — ${tone['chakra']}',
                     style: const TextStyle(color: Colors.white),
                   ),
                   subtitle: Text(
                     tone['benefit']!,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white70),
                   ),
-                  onTap: () => _handleToneTap(tone['name']!),
-                  trailing: _currentlyPlaying == filename
-                      ? const Icon(Icons.pause_circle, color: Colors.white)
-                      : const Icon(Icons.play_circle, color: Colors.white),
+                  trailing: IconButton(
+                    icon: Icon(
+                      isPlaying ? Icons.stop : Icons.play_arrow,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => _handleToneTap(filename),
+                  ),
                 );
               },
             ),
           ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _stopAllPlayback,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: const CircleBorder(),
-              padding: const EdgeInsets.all(24),
-            ),
-            child: const Icon(Icons.stop, color: Colors.white, size: 32),
-          ),
-          const SizedBox(height: 24),
         ],
       ),
     );
