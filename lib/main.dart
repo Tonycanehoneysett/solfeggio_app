@@ -14,11 +14,13 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
+      backgroundColor: const Color(0xFF0D47A1), // Royal blue
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Icon(Icons.graphic_eq, size: 100, color: Colors.white),
+            const SizedBox(height: 20),
             const Text(
               'Audio Wellness',
               style: TextStyle(
@@ -27,29 +29,17 @@ class HomePage extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Frequency Healing For Mind & Body',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 16),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.0),
               child: Text(
                 'Select the frequency that best supports your emotional and physical needs',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(fontSize: 18, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 32),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.blue[900],
-              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -73,9 +63,6 @@ class TonesPage extends StatefulWidget {
 }
 
 class _TonesPageState extends State<TonesPage> {
-  AudioPlayer? _player;
-  String? _currentlyPlaying;
-
   final List<Map<String, String>> tones = [
     {'name': '174Hz', 'benefit': 'Pain relief & stress reduction'},
     {'name': '285Hz', 'benefit': 'Healing tissues & organs'},
@@ -88,86 +75,77 @@ class _TonesPageState extends State<TonesPage> {
     {'name': '963Hz', 'benefit': 'Spiritual awakening & divine consciousness'},
   ];
 
-  Future<void> _handleToneTap(String toneName) async {
+  final Map<String, AudioPlayer> _players = {};
+  bool _isPlaying = false;
+
+  Future<void> _playTone(String toneName) async {
     final filename = '${toneName.toLowerCase()}_30min.mp3';
-
-    if (_currentlyPlaying == filename) {
-      await _player?.stop();
-      setState(() => _currentlyPlaying = null);
-      return;
-    }
-
-    await _player?.stop();
-    _player?.dispose();
-
-    final newPlayer = AudioPlayer();
-    await newPlayer.setLoopMode(LoopMode.one);
-    await newPlayer.setAsset('assets/audio/$filename');
-    await newPlayer.play();
-
+    final player = AudioPlayer();
+    await player.setLoopMode(LoopMode.one);
+    await player.setAsset('assets/audio/$filename');
+    await player.play();
+    _players[toneName] = player;
     setState(() {
-      _player = newPlayer;
-      _currentlyPlaying = filename;
+      _isPlaying = true;
     });
   }
 
-  Future<void> _stopPlayback() async {
-    await _player?.stop();
-    setState(() => _currentlyPlaying = null);
+  Future<void> _stopAllTones() async {
+    for (var player in _players.values) {
+      await player.stop();
+      await player.dispose();
+    }
+    _players.clear();
+    setState(() {
+      _isPlaying = false;
+    });
   }
 
   @override
   void dispose() {
-    _player?.dispose();
+    _stopAllTones();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
+      backgroundColor: const Color(0xFF0D47A1), // Royal blue
       appBar: AppBar(
-        backgroundColor: Colors.blue[900],
+        backgroundColor: const Color(0xFF0D47A1),
+        title: const Text('Healing Tones', style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Healing Tones',
-          style: TextStyle(color: Colors.white),
-        ),
       ),
-      body: Stack(
+      body: Column(
         children: [
-          ListView.builder(
-            itemCount: tones.length,
-            itemBuilder: (context, index) {
-              final tone = tones[index];
-              final filename = '${tone['name']!.toLowerCase()}_30min.mp3';
-              final isPlaying = _currentlyPlaying == filename;
-              return ListTile(
-                title: Text(
-                  tone['name']!,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                subtitle: Text(
-                  tone['benefit']!,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                onTap: () => _handleToneTap(tone['name']!),
-                trailing: Icon(
-                  isPlaying ? Icons.stop_circle : Icons.play_circle,
-                  color: Colors.white,
-                ),
-              );
-            },
-          ),
-          Positioned(
-            bottom: 20,
-            left: MediaQuery.of(context).size.width / 2 - 30,
-            child: FloatingActionButton(
-              backgroundColor: Colors.red,
-              onPressed: _stopPlayback,
-              child: const Icon(Icons.stop, size: 32),
+          Expanded(
+            child: ListView.builder(
+              itemCount: tones.length,
+              itemBuilder: (context, index) {
+                final tone = tones[index];
+                return ListTile(
+                  title: Text(tone['name']!, style: const TextStyle(color: Colors.white)),
+                  subtitle: Text(tone['benefit']!, style: const TextStyle(color: Colors.white70)),
+                  onTap: () => _playTone(tone['name']!),
+                  trailing: const Icon(Icons.play_circle, color: Colors.white),
+                );
+              },
             ),
           ),
+          const SizedBox(height: 10),
+          if (_isPlaying)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: ElevatedButton(
+                onPressed: _stopAllTones,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(24),
+                ),
+                child: const Icon(Icons.stop, color: Colors.white, size: 32),
+              ),
+            ),
         ],
       ),
     );
