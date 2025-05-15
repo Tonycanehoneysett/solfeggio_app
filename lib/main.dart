@@ -14,57 +14,48 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade900,
+      backgroundColor: Color(0xFFE6F2FA),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Audio',
-              style: TextStyle(
-                fontSize: 42,
-                fontWeight: FontWeight.bold,
-                color: Colors.greenAccent,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo Image (make sure the asset is correctly referenced)
+              Image.asset(
+                'assets/icon/app_icon.png',
+                height: 160,
               ),
-            ),
-            const Text(
-              'Wellness',
-              style: TextStyle(
-                fontSize: 42,
-                fontWeight: FontWeight.bold,
-                color: Colors.greenAccent,
+              const SizedBox(height: 20),
+              const Text(
+                'Audio Wellness',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Frequency Healing For Mind & Body',
-              style: TextStyle(fontSize: 18, color: Colors.white),
-            ),
-            const SizedBox(height: 60),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: Text(
+              const SizedBox(height: 8),
+              const Text(
                 'Select the frequency that best supports your emotional and physical needs',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
                 textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.blue.shade900,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const TonesPage()),
+                  );
+                },
+                child: const Text('Explore Tones'),
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TonesPage()),
-                );
-              },
-              child: const Text('Explore Tones'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -79,6 +70,9 @@ class TonesPage extends StatefulWidget {
 }
 
 class _TonesPageState extends State<TonesPage> {
+  final Map<String, AudioPlayer> _players = {};
+  bool _isPlaying = false;
+
   final List<Map<String, String>> tones = [
     {'name': '174Hz', 'benefit': 'Pain relief & stress reduction'},
     {'name': '285Hz', 'benefit': 'Healing tissues & organs'},
@@ -91,78 +85,73 @@ class _TonesPageState extends State<TonesPage> {
     {'name': '963Hz', 'benefit': 'Spiritual awakening & divine consciousness'},
   ];
 
-  final Map<String, AudioPlayer> _players = {};
-  String? _currentlyPlaying;
-
-  Future<void> _handleToneTap(String toneName) async {
-    final filename = '${toneName.toLowerCase()}_30min.mp3';
-
-    // If the tone is already playing, do nothing
-    if (_currentlyPlaying == filename) return;
-
-    // Stop all currently playing tones
-    await _stopAllPlayback();
-
-    // Start new tone
+  Future<void> _playTone(String name) async {
+    final filename = '${name.toLowerCase()}_30min.mp3';
     final player = AudioPlayer();
     await player.setLoopMode(LoopMode.one);
     await player.setAsset('assets/audio/$filename');
     await player.play();
+    _players[name] = player;
 
     setState(() {
-      _currentlyPlaying = filename;
-      _players[filename] = player;
+      _isPlaying = true;
     });
   }
 
-  Future<void> _stopAllPlayback() async {
+  Future<void> _stopAllTones() async {
     for (var player in _players.values) {
       await player.stop();
       await player.dispose();
     }
     _players.clear();
-    setState(() => _currentlyPlaying = null);
+    setState(() {
+      _isPlaying = false;
+    });
   }
 
   @override
   void dispose() {
-    _stopAllPlayback();
+    _stopAllTones();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Healing Tones'),
-        backgroundColor: Colors.blue.shade900,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.stop_circle, color: Colors.redAccent),
-            tooltip: 'Stop All',
-            iconSize: 36,
-            onPressed: _stopAllPlayback,
-          ),
-        ],
-      ),
-      body: ListView.builder(
-        itemCount: tones.length,
-        itemBuilder: (context, index) {
-          final tone = tones[index];
-          final filename = '${tone['name']!.toLowerCase()}_30min.mp3';
-          final isPlaying = _currentlyPlaying == filename;
-
-          return ListTile(
-            title: Text(tone['name']!),
-            subtitle: Text(tone['benefit']!),
-            trailing: Icon(
-              isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-              color: isPlaying ? Colors.green : Colors.blue,
-              size: 30,
+      appBar: AppBar(title: const Text('Healing Tones')),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: tones.length,
+              itemBuilder: (context, index) {
+                final tone = tones[index];
+                return ListTile(
+                  title: Text(tone['name']!),
+                  subtitle: Text(tone['benefit']!),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.play_circle_fill),
+                    onPressed: () => _playTone(tone['name']!),
+                  ),
+                );
+              },
             ),
-            onTap: () => _handleToneTap(tone['name']!),
-          );
-        },
+          ),
+          const SizedBox(height: 10),
+          if (_isPlaying)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: ElevatedButton(
+                onPressed: _stopAllTones,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(24),
+                ),
+                child: const Icon(Icons.stop, size: 40, color: Colors.white),
+              ),
+            ),
+        ],
       ),
     );
   }
