@@ -14,37 +14,31 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D47A1), // Royal blue
+      backgroundColor: const Color(0xFF003366),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset('assets/icon/icon.png', height: 160),
+            const SizedBox(height: 20),
             const Text(
               'Audio Wellness',
               style: TextStyle(
-                fontSize: 36,
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Frequency Healing For Mind & Body',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 12),
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              padding: EdgeInsets.symmetric(horizontal: 32.0),
               child: Text(
                 'Select the frequency that best supports your emotional and physical needs',
-                style: TextStyle(fontSize: 16, color: Colors.white),
                 textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -73,15 +67,15 @@ class _TonesPageState extends State<TonesPage> {
   String? _currentlyPlaying;
 
   final List<Map<String, String>> tones = [
-    {'name': '174Hz', 'benefit': 'Root Chakra — Pain relief & stress reduction'},
-    {'name': '285Hz', 'benefit': 'Sacral Chakra — Healing tissues & organs'},
-    {'name': '396Hz', 'benefit': 'Solar Plexus Chakra — Liberating fear & guilt'},
-    {'name': '417Hz', 'benefit': 'Heart Chakra — Undoing situations & trauma'},
-    {'name': '528Hz', 'benefit': 'Throat Chakra — Harmonizing body & spirit'},
-    {'name': '639Hz', 'benefit': 'Third Eye Chakra — DNA repair & transformation'},
-    {'name': '741Hz', 'benefit': 'Crown Chakra — Connecting relationships'},
-    {'name': '852Hz', 'benefit': 'Soul Star Chakra — Solving problems & intuition'},
-    {'name': '963Hz', 'benefit': 'Divine Chakra — Spiritual awakening & consciousness'},
+    {'name': '174Hz', 'benefit': 'Pain relief & stress reduction (Root Chakra)'},
+    {'name': '285Hz', 'benefit': 'Healing tissues & organs (Sacral Chakra)'},
+    {'name': '396Hz', 'benefit': 'Liberating fear & guilt (Solar Plexus Chakra)'},
+    {'name': '417Hz', 'benefit': 'Undoing situations & trauma (Heart Chakra)'},
+    {'name': '528Hz', 'benefit': 'Harmonizing body & spirit (Throat Chakra)'},
+    {'name': '639Hz', 'benefit': 'DNA repair & transformation (Third Eye Chakra)'},
+    {'name': '741Hz', 'benefit': 'Connecting relationships (Crown Chakra)'},
+    {'name': '852Hz', 'benefit': 'Solving problems & intuition (Soul Star Chakra)'},
+    {'name': '963Hz', 'benefit': 'Spiritual awakening (Divine Connection)'},
   ];
 
   Future<void> _handleToneTap(String toneName) async {
@@ -105,11 +99,9 @@ class _TonesPageState extends State<TonesPage> {
     });
   }
 
-  void _stopPlayback() {
+  void _stopAllPlayback() {
     _player?.stop();
-    setState(() {
-      _currentlyPlaying = null;
-    });
+    setState(() => _currentlyPlaying = null);
   }
 
   @override
@@ -121,13 +113,13 @@ class _TonesPageState extends State<TonesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D47A1), // Royal blue
+      backgroundColor: const Color(0xFF003366),
       appBar: AppBar(
-        title: const Text('Healing Tones'),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF0D47A1),
+        backgroundColor: const Color(0xFF003366),
+        title: const Center(
+          child: Text('Pure Healing Tones'),
+        ),
         foregroundColor: Colors.white,
-        elevation: 0,
       ),
       body: Column(
         children: [
@@ -144,7 +136,7 @@ class _TonesPageState extends State<TonesPage> {
                   ),
                   subtitle: Text(
                     tone['benefit']!,
-                    style: const TextStyle(color: Colors.white70),
+                    style: const TextStyle(color: Colors.white),
                   ),
                   onTap: () => _handleToneTap(tone['name']!),
                   trailing: _currentlyPlaying == filename
@@ -154,17 +146,17 @@ class _TonesPageState extends State<TonesPage> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: _stopPlayback,
+            onPressed: _stopAllPlayback,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(24),
             ),
-            child: const Icon(Icons.stop, color: Colors.white, size: 36),
+            child: const Icon(Icons.stop, color: Colors.white, size: 32),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
         ],
       ),
     );
