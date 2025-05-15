@@ -14,35 +14,43 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF1A1AFF), // Deep blue background
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/icon/app_icon.png',
-                width: 200,
-                height: 200,
-              ),
-              const SizedBox(height: 24),
               const Text(
-                'Audio Wellness',
+                'Audio\nWellness',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Colors.lightGreenAccent,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               const Text(
-                'Select the frequency that best supports your emotional and physical needs',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
-                textAlign: TextAlign.center,
+                'Frequency Healing For Mind & Body',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 60),
+              const Text(
+                'Select the frequency that best supports your\nemotional and physical needs',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              const SizedBox(height: 24),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -118,13 +126,20 @@ class _TonesPageState extends State<TonesPage> {
         itemBuilder: (context, index) {
           final tone = tones[index];
           final filename = '${tone['name']!.toLowerCase()}_30min.mp3';
+          final isPlaying = _currentlyPlaying == filename;
+
           return ListTile(
             title: Text(tone['name']!),
             subtitle: Text(tone['benefit']!),
-            onTap: () => _handleToneTap(tone['name']!),
-            trailing: _currentlyPlaying == filename
-                ? const Icon(Icons.stop_circle, color: Colors.red)
-                : const Icon(Icons.play_circle, color: Colors.green),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(isPlaying ? Icons.stop_circle : Icons.play_circle),
+                  onPressed: () => _handleToneTap(tone['name']!),
+                ),
+              ],
+            ),
           );
         },
       ),
