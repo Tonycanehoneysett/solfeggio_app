@@ -123,9 +123,14 @@ class _TonesPageState extends State<TonesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[900],
-      appBar: AppBar(
+    appBar: AppBar(
+  backgroundColor: Colors.blue[900],
+  iconTheme: IconThemeData(color: Colors.white),
+  title: const Text(
+    'Healing Tones',
+    style: TextStyle(color: Colors.white),
+  ),
+),
         backgroundColor: Colors.blue[900],
         title: const Text('Healing Tones'),
       ),
