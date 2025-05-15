@@ -14,54 +14,58 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade800,
-      body: Center(
+      body: Container(
+        color: Colors.blue[800],
+        width: double.infinity,
+        height: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo image (make sure logo is placed at assets/icon/logo.png)
-            Image.asset(
-              'assets/icon/logo.png',
-              width: 200,
-              height: 200,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 16),
             const Text(
-              'Audio Wellness',
+              'Audio\nWellness',
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.lightGreenAccent,
+                fontSize: 40,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFB3FFCB), // light green/blue
+                height: 1.2,
               ),
             ),
             const SizedBox(height: 8),
             const Text(
               'Frequency Healing For Mind & Body',
               style: TextStyle(
-                fontSize: 18,
-                color: Colors.lightBlueAccent,
+                fontSize: 16,
+                color: Colors.white70,
               ),
             ),
-            const SizedBox(height: 40),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: Text(
-                'Select the frequency that best supports your emotional and physical needs',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-                textAlign: TextAlign.center,
+            const SizedBox(height: 60),
+            Container(
+              padding: const EdgeInsets.all(24.0),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
               ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TonesPage()),
-                );
-              },
-              child: const Text('Explore Tones'),
-            ),
+              child: Column(
+                children: [
+                  const Text(
+                    'Select the frequency that best supports your emotional and physical needs',
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const TonesPage()),
+                      );
+                    },
+                    child: const Text('Explore Tones'),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
@@ -104,13 +108,17 @@ class _TonesPageState extends State<TonesPage> {
     _player?.dispose();
     final newPlayer = AudioPlayer();
     await newPlayer.setLoopMode(LoopMode.one);
-    await newPlayer.setAsset('assets/audio/$filename');
-    await newPlayer.play();
+    try {
+      await newPlayer.setAsset('assets/audio/$filename');
+      await newPlayer.play();
 
-    setState(() {
-      _player = newPlayer;
-      _currentlyPlaying = filename;
-    });
+      setState(() {
+        _player = newPlayer;
+        _currentlyPlaying = filename;
+      });
+    } catch (e) {
+      debugPrint('Error playing $filename: $e');
+    }
   }
 
   @override
@@ -131,10 +139,10 @@ class _TonesPageState extends State<TonesPage> {
           return ListTile(
             title: Text(tone['name']!),
             subtitle: Text(tone['benefit']!),
-            onTap: () => _handleToneTap(tone['name']!),
             trailing: _currentlyPlaying == filename
                 ? const Icon(Icons.pause_circle)
                 : const Icon(Icons.play_circle),
+            onTap: () => _handleToneTap(tone['name']!),
           );
         },
       ),
